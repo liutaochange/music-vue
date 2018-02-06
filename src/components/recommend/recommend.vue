@@ -17,6 +17,7 @@
     width: 100%
     top: 88px
     bottom: 0
+    text-align: center
     .recommend-content
       height: 100%
       overflow: hidden
