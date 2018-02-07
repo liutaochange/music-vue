@@ -1,14 +1,44 @@
 <template>
   <div class="recommend" ref="recommend">
-    推荐
+    <div class="recommend-content">
+      <div v-if="slider.length" class="slider-wrapper">
+        <slider>
+          <div v-for="(item,index) in slider" :key="index">
+            <a :href="item.linkUrl">
+              <img :src="item.picUrl" alt="banner">
+            </a>
+          </div>
+        </slider>
+      </div>
+    </div>
 
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-
+import {getDefaultBanner} from 'api/index'
+import {ErrOk} from 'api/config'
+import slider from 'base/slider/slider'
+export default{
+  data () {
+    return {
+      slider: []
+    }
+  },
+  created () {
+    const _this = this
+    getDefaultBanner().then(res => {
+      if (res.data.code === ErrOk) {
+        console.log(res.data)
+        _this.slider = res.data.data.slider
+      }
+    })
+  },
+  components: {
+    slider
+  }
+}
 </script>
-
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
 
