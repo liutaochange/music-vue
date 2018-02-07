@@ -3,13 +3,21 @@
     <div class="slider-group" ref="sliderGroup">
       <slot></slot>
     </div>
-    <div class="dots"></div>
+    <div class="dots">
+      <span v-for="(item,index) in dots" :key="index" class="dot" :class="{Active: currentIndex === index}"></span>
+    </div>
   </div>
 </template>
 <script>
 import BScroll from 'better-scroll'
 import {addClass} from 'common/js/dom'
 export default{
+  data () {
+    return {
+      dots: [],
+      currentIndex: 0
+    }
+  },
   props: {
     loop: {
       type: Boolean,
@@ -28,6 +36,7 @@ export default{
     const _this = this
     setTimeout(function () {
       _this.setWidth()
+      _this.initDots()
       _this.initSlider()
     }, 20)
   },
@@ -47,18 +56,28 @@ export default{
       }
       this.$refs.sliderGroup.style.width = width + 'px'
     },
+    initDots: function () {
+      this.dots = new Array(this.children.length)
+    },
     initSlider: function () {
       var loop = this.loop
-      console.log(loop)
       this.slider = new BScroll(this.$refs.slider, {
         scrollX: true,
         scrollY: false,
         momentum: false,
-        snap: true,
-        snapLoop: loop,
-        snapThreshold: 0.3,
-        snapSpeed: 400,
+        snap: {
+          loop: loop,
+          threshold: 0.1
+        },
+        speed: 400,
         click: true
+      })
+      this.slider.on('scrollEnd', () => {
+        let pageIndex = this.slider.getCurrentPage().pageX
+        if (this.loop) {
+          pageIndex -= 1
+        }
+        this.currentIndex = pageIndex
       })
     }
   }
@@ -94,10 +113,15 @@ export default{
       text-align: center
       font-size: 0
       .dot
-        display: inlie-block
+        display: inline-block
         width: 8px
         height: 8px
         border-radius: 50%
         background: #e9ecf5
-        margin-right: 4px
+        margin: 0 4px
+        &.Active
+          width: 20px;
+          border-radius: 5px;
+          background: rgba(255,255,255,0.8)
+
 </style>
