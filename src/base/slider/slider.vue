@@ -38,10 +38,20 @@ export default{
       _this.setWidth()
       _this.initDots()
       _this.initSlider()
+      if (_this.autoPlay) {
+        _this.play()
+      }
     }, 20)
+    window.addEventListener('resize', () => {
+      if (!this.slider) {
+        return
+      }
+      _this.setWidth(true)
+      _this.slider.refresh()
+    })
   },
   methods: {
-    setWidth: function () {
+    setWidth: function (isresize) {
       this.children = this.$refs.sliderGroup.children
       let sliderWidth = this.$refs.slider.clientWidth
       var width = 0
@@ -51,7 +61,7 @@ export default{
         child.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-      if (this.loop) {
+      if (this.loop && !isresize) {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'
@@ -65,11 +75,10 @@ export default{
         scrollX: true,
         scrollY: false,
         momentum: false,
-        snap: {
-          loop: loop,
-          threshold: 0.1
-        },
-        speed: 400,
+        snap: true,
+        snapLoop: loop,
+        snapThreshold: 0.3,
+        snapSpeed: 400,
         click: true
       })
       this.slider.on('scrollEnd', () => {
@@ -78,8 +87,29 @@ export default{
           pageIndex -= 1
         }
         this.currentIndex = pageIndex
+        if (this.autoPlay) {
+          this.play()
+        }
       })
+      this.slider.on('beforeScrollStart', () => {
+        if (this.autoPlay) {
+          clearTimeout(this.timer)
+        }
+      })
+    },
+    play: function () {
+      let pageIndex = this.currentIndex + 1
+      if (this.loop) {
+        pageIndex += 1
+      }
+      var _this = this
+      this.timer = setTimeout(() => {
+        _this.slider.goToPage(pageIndex, 0, 400)
+      }, 3000)
     }
+  },
+  destroyed () {
+    clearTimeout(this.timer)
   }
 }
 </script>
