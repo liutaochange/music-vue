@@ -49,6 +49,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll,
     },
     before(apiRoutes) {
+      // 获取banner
       apiRoutes.get('/api/recomend', (req, res) => {
         const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
         axios.get(url, {
@@ -63,6 +64,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取歌单
       apiRoutes.get('/api/playList', (req, res) => {
         const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url, {

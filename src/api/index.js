@@ -3,6 +3,7 @@ import {commonParams} from 'api/config'
 const request = axios.create({
   withCredentials: true
 })
+
 // 获取banner
 export const getDefaultBanner = () => {
   const url = '/api/recomend'
@@ -16,6 +17,7 @@ export const getDefaultBanner = () => {
     params: data
   })
 }
+
 // 获取歌单
 export const getPlayList = () => {
   const url = '/api/playList'
