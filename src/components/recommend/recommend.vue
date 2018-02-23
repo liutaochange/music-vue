@@ -1,41 +1,69 @@
 <template>
   <div class="recommend" ref="recommend">
-    <div class="recommend-content">
-      <div v-if="slider.length" class="slider-wrapper">
-        <slider>
-          <div v-for="(item,index) in slider" :key="index">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl" alt="banner">
-            </a>
-          </div>
-        </slider>
+    <scroll class="recommend-content" :data="playList">
+      <div>
+        <div v-if="slider.length" class="slider-wrapper">
+          <slider>
+            <div v-for="(item,index) in slider" :key="index">
+              <a :href="item.linkUrl">
+                <img :src="item.picUrl" alt="banner">
+              </a>
+            </div>
+          </slider>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li class="item" v-for="(item,index) in playList" :key="index">
+              <div class="icon">
+                <img :src="item.imgurl" alt="图片" width="60" height="60">
+              </div>
+              <div class="text">
+                <h2 class="name">{{item.creator.name}}</h2>
+                <p class="desc">{{item.dissname}}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-
+    </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import {getDefaultBanner} from 'api/index'
+import {getDefaultBanner, getPlayList} from 'api/index'
 import {ErrOk} from 'api/config'
 import slider from 'base/slider/slider'
+import scroll from 'base/scroll/scroll'
 export default{
   data () {
     return {
-      slider: []
+      slider: [],
+      playList: []
     }
   },
   created () {
     const _this = this
     getDefaultBanner().then(res => {
       if (res.data.code === ErrOk) {
-        console.log(res.data)
         _this.slider = res.data.data.slider
       }
     })
+    _this.getPlayList()
   },
   components: {
-    slider
+    slider,
+    scroll
+  },
+  methods: {
+    getPlayList: function () {
+      const _this = this
+      getPlayList().then((res) => {
+        if (res.code === ErrOk) {
+          _this.playList = res.data.list
+        }
+      })
+    }
   }
 }
 </script>
@@ -67,6 +95,7 @@ export default{
           box-sizing: border-box
           align-items: center
           padding: 0 20px 20px 20px
+          text-align: left
           .icon
             flex: 0 0 60px
             width: 60px
