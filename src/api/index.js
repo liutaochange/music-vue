@@ -39,3 +39,25 @@ export const getPlayList = () => {
     return Promise.resolve(res.data)
   })
 }
+
+// 获取歌手
+export const getSingerList = () => {
+  const url = '/api/singerList'
+  const data = Object.assign({}, commonParams, {
+    loginUin: 0,
+    platform: 'yqq',
+    hostUin: 0,
+    format: 'json',
+    needNewCode: 0,
+    channel: 'singer',
+    page: 'list',
+    key: 'all_all_all',
+    pagesize: 100,
+    pagenum: 1
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}

@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrap">
+  <div ref="wrapper">
     <slot></slot>
   </div>
 </template>
@@ -21,16 +21,17 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(function () {
-      this.initScroll()
-    })
+    const _this = this
+    setTimeout(() => {
+      _this.initScroll()
+    }, 20)
   },
   methods: {
     initScroll: function () {
-      if (!this.$refs.wrap) {
+      if (!this.$refs.wrapper) {
         return
       }
-      this.scroll = new BScroll(this.$refs.wrap, {
+      this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click
       })
@@ -47,9 +48,8 @@ export default {
   },
   watch: {
     data () {
-      var _this = this
-      setTimeout(function () {
-        _this.refresh()
+      setTimeout(() => {
+        this.refresh()
       }, 20)
     }
   }

@@ -1,22 +1,22 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll class="recommend-content" :data="playList">
+    <scroll ref="scrolls" class="recommend-content" :data="playList" v-if="slider.length>0&&playList.length>0">
       <div>
-        <div v-if="slider.length" class="slider-wrapper">
+        <div v-if="slider.length>0" class="slider-wrapper">
           <slider>
             <div v-for="(item,index) in slider" :key="index">
               <a :href="item.linkUrl">
-                <img :src="item.picUrl" alt="banner">
+                <img @load="imageLoaded" :src="item.picUrl" alt="banner" class="needsClick">
               </a>
             </div>
           </slider>
         </div>
-        <div class="recommend-list">
+        <div class="recommend-list" v-if="playList.length>0">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
             <li class="item" v-for="(item,index) in playList" :key="index">
               <div class="icon">
-                <img :src="item.imgurl" alt="图片" width="60" height="60">
+                <img v-lazy="item.imgurl" alt="图片" width="60" height="60">
               </div>
               <div class="text">
                 <h2 class="name">{{item.creator.name}}</h2>
@@ -27,6 +27,9 @@
         </div>
       </div>
     </scroll>
+    <div class="loading-container" v-if="playList.length==0">
+      <loading></loading>
+    </div>
   </div>
 </template>
 
@@ -35,27 +38,36 @@ import {getDefaultBanner, getPlayList} from 'api/index'
 import {ErrOk} from 'api/config'
 import slider from 'base/slider/slider'
 import scroll from 'base/scroll/scroll'
+import loading from 'base/loading/loading'
 export default{
   data () {
     return {
       slider: [],
-      playList: []
+      playList: [],
+      checkLoading: false
     }
   },
   created () {
     const _this = this
-    getDefaultBanner().then(res => {
-      if (res.data.code === ErrOk) {
-        _this.slider = res.data.data.slider
-      }
-    })
-    _this.getPlayList()
+    _this.getBannerList()
+    setTimeout(() => {
+      _this.getPlayList()
+    }, 1000)
   },
   components: {
     slider,
-    scroll
+    scroll,
+    loading
   },
   methods: {
+    getBannerList: function () {
+      const _this = this
+      getDefaultBanner().then(res => {
+        if (res.data.code === ErrOk) {
+          _this.slider = res.data.data.slider
+        }
+      })
+    },
     getPlayList: function () {
       const _this = this
       getPlayList().then((res) => {
@@ -63,6 +75,12 @@ export default{
           _this.playList = res.data.list
         }
       })
+    },
+    imageLoaded: function () {
+      if (!this.checkLoading) {
+        this.checkLoading = true
+        /* this.$refs.scrolls.refresh() */
+      }
     }
   }
 }

@@ -78,6 +78,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取歌手
+      apiRoutes.get('/api/singerList', (req, res) => {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/portal/singer_list.html'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
     }
   },
   plugins: [
