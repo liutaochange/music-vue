@@ -6,7 +6,7 @@
           <slider>
             <div v-for="(item,index) in slider" :key="index">
               <a :href="item.linkUrl">
-                <img @load="imageLoaded" :src="item.picUrl" alt="banner" class="needsClick">
+                <img :src="item.picUrl" alt="banner" class="needsclick">
               </a>
             </div>
           </slider>
@@ -16,7 +16,7 @@
           <ul>
             <li class="item" v-for="(item,index) in playList" :key="index">
               <div class="icon">
-                <img v-lazy="item.imgurl" alt="图片" width="60" height="60">
+                <img @load="imageLoaded" v-lazy="item.imgurl" alt="图片" width="60" height="60">
               </div>
               <div class="text">
                 <h2 class="name">{{item.creator.name}}</h2>
@@ -43,16 +43,13 @@ export default{
   data () {
     return {
       slider: [],
-      playList: [],
-      checkLoading: false
+      playList: []
     }
   },
   created () {
     const _this = this
     _this.getBannerList()
-    setTimeout(() => {
-      _this.getPlayList()
-    }, 1000)
+    _this.getPlayList()
   },
   components: {
     slider,
@@ -60,7 +57,7 @@ export default{
     loading
   },
   methods: {
-    getBannerList: function () {
+    getBannerList () {
       const _this = this
       getDefaultBanner().then(res => {
         if (res.data.code === ErrOk) {
@@ -68,7 +65,7 @@ export default{
         }
       })
     },
-    getPlayList: function () {
+    getPlayList () {
       const _this = this
       getPlayList().then((res) => {
         if (res.code === ErrOk) {
@@ -76,10 +73,11 @@ export default{
         }
       })
     },
-    imageLoaded: function () {
-      if (!this.checkLoading) {
-        this.checkLoading = true
-        /* this.$refs.scrolls.refresh() */
+    imageLoaded () {
+      const _this = this
+      if (!_this.checkLoaded) {
+        _this.checkLoaded = true
+        _this.$refs.scrolls.refresh()
       }
     }
   }

@@ -1,11 +1,14 @@
 <template>
   <div class="singer" ref="singer">
+    <list-view :data = "singerList"></list-view>
   </div>
 </template>
 
 <script>
 import {getSingerList} from 'api/index'
 import {ErrOk} from 'api/config'
+import Singer from 'common/js/singer'
+import ListView from 'base/listview/listview'
 const hotName = '热门'
 const hotSingerLen = 10
 export default {
@@ -22,7 +25,7 @@ export default {
       const _this = this
       getSingerList().then((res) => {
         if (res.code === ErrOk) {
-          _this.singerList = res.data.list
+          _this.singerList = _this.stanrdSinger(res.data.list)
         }
       })
     },
@@ -35,14 +38,42 @@ export default {
       }
       list.forEach((ele, index) => {
         if (index < hotSingerLen) {
-          map.hot.items.push({
-            id: ele.Fsinger.mid,
-            name: ele.Fsinger.name,
-            avatar: `http://y.gtimg.cn/music/photo_new/T001R300x300M000${ele.Fsinger.mid}.jpg?max_age=2592000`
-          })
+          map.hot.items.push(new Singer({
+            id: ele.Fsinger_mid,
+            name: ele.Fsinger_name
+          }))
         }
+        const key = ele.Findex
+        if (!map[key]) {
+          map[key] = {
+            title: key,
+            items: []
+          }
+        }
+        map[key].items.push(new Singer({
+          id: ele.Fsinger_mid,
+          name: ele.Fsinger_name
+        }))
       })
+      // 为了得到有序列表，处理 map
+      let hotArr = []
+      let retArr = []
+      for (let key in map) {
+        let val = map[key]
+        if (val.title.match(/[a-zA-Z]/)) {
+          retArr.push(val)
+        } else if (val.title === hotName) {
+          hotArr.push(val)
+        }
+      }
+      retArr.sort((a, b) => {
+        return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+      })
+      return hotArr.concat(retArr)
     }
+  },
+  components: {
+    ListView
   }
 }
 </script>
