@@ -1,32 +1,111 @@
 <template>
- <div>
-   <Scroll class="listview" :data="data">
+   <Scroll class="listview" :data="data" ref="listView" :listen-scroll="listenScroll" @scroll="scroll">
      <ul>
-       <li v-for="(group,index) in data" :key="index" class="list-group">
+       <li v-for="(group,index) in data" :key="index" class="list-group" ref="listGroup">
          <h2 class="list-group-title">{{group.title}}</h2>
          <ul>
            <li v-for="(item,ins) in group.items" :key="ins" class="list-group-item">
-             <img :src="item.avator" alt="avator" class="avatar">
+             <img v-lazy="item.avator" alt="avator" class="avatar">
              <span class="name">{{item.name}}</span>
            </li>
          </ul>
        </li>
      </ul>
+     <div class="list-shortcut" @touchstart="onTouchStart" @touchmove.stop.prevent="stopMove">
+       <ul>
+         <li v-for="(item,index) in shortList" :key="index" class="item" :data-index="index" :class="{'current': currentIndex == index}">{{item}}</li>
+       </ul>
+     </div>
    </Scroll>
- </div>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
+import {getData} from 'common/js/dom'
+const Height = 18
 export default {
+  created () {
+    this.probeType = 3
+    this.touch = {}
+    this.listenScroll = true
+    this.listHeight = []
+    setTimeout(() => {
+      this.getHeight()
+    }, 20)
+  },
+  data () {
+    return {
+      scrollY: -1,
+      currentIndex: 0
+    }
+  },
   props: {
     data: {
       type: Array,
       default: null
     }
   },
+  computed: {
+    shortList () {
+      return this.data.map((group) => {
+        return group.title.substr(0, 1)
+      })
+    }
+  },
   components: {
     Scroll
+  },
+  methods: {
+    onTouchStart (e) {
+      let anthorIndex = getData(e.target, 'index')
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY
+      this.touch.anthorIndex = anthorIndex
+      this._scrollTo(anthorIndex)
+    },
+    stopMove (e) {
+      let firstTouch = e.touches[0]
+      this.touch.y2 = firstTouch.pageY
+      let delta = (this.touch.y2 - this.touch.y1) / Height || 0
+      let anthorIndex = parseInt(this.touch.anthorIndex) + delta
+      this._scrollTo(anthorIndex)
+    },
+    _scrollTo (index) {
+      this.$refs.listView.scrollToElement(this.$refs.listGroup[index], 0)
+    },
+    scroll (pos) {
+      this.scrollY = pos.y
+    },
+    getHeight () {
+      this.listHeight = []
+      const list = this.$refs.listGroup
+      let height = 0
+      this.listHeight.push(height)
+      list.forEach((ele, index) => {
+        height += ele.clientHeight
+        this.listHeight.push(height)
+      })
+    }
+  },
+  wactch: {
+    data () {
+      setTimeout(() => {
+        this.getHeight()
+      }, 20)
+    },
+    scrollY (newY) {
+      console.log(this.currentIndex)
+      const listenHeight = this.listenHeight
+      for (let i = 0; i < listenHeight.length; i++) {
+        let h1 = listenHeight[i]
+        let h2 = listenHeight[i + 1]
+        if (!h2 || (-newY > h1 && -newY < h2)) {
+          this.currentIndex = i
+          return
+        }
+      }
+      this.currentIndex = 0
+    }
   }
 }
 </script>
@@ -49,6 +128,7 @@ export default {
         font-size: $font-size-small
         color: $color-text-l
         background: $color-highlight-background
+        text-align: left
       .list-group-item
         display: flex
         align-items: center
