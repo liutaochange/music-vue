@@ -61,3 +61,25 @@ export const getSingerList = () => {
     return Promise.resolve(res.data)
   })
 }
+
+// 获取歌手详情
+export const getSingerDetail = (singerId) => {
+  const url = '/api/singerDetail'
+  const data = Object.assign({}, commonParams, {
+    loginUin: 0,
+    platform: 'yqq',
+    hostUin: 0,
+    format: 'json',
+    needNewCode: 0,
+    singermid: singerId,
+    order: 'listen',
+    begin: 0,
+    num: 80,
+    songstatus: 1
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}

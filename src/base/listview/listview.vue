@@ -1,20 +1,23 @@
 <template>
-   <Scroll class="listview" :data="data" ref="listView" :listen-scroll="listenScroll" @scroll="scroll">
+   <Scroll class="listview" :data="data" ref="listView" :listen-scroll="listenScroll" :probe-type="probeType" @scroll="scroll">
      <ul>
        <li v-for="(group,index) in data" :key="index" class="list-group" ref="listGroup">
          <h2 class="list-group-title">{{group.title}}</h2>
          <ul>
-           <li v-for="(item,ins) in group.items" :key="ins" class="list-group-item">
+           <li v-for="(item,ins) in group.items" :key="ins" class="list-group-item" @click="selectItem(item)">
              <img v-lazy="item.avator" alt="avator" class="avatar">
              <span class="name">{{item.name}}</span>
            </li>
          </ul>
        </li>
      </ul>
-     <div class="list-shortcut" @touchstart="onTouchStart" @touchmove.stop.prevent="stopMove">
+     <div class="list-shortcut" @touchstart.stop.prevent="onTouchStart" @touchmove.stop.prevent="stopMove">
        <ul>
          <li v-for="(item,index) in shortList" :key="index" class="item" :data-index="index" :class="{'current': currentIndex == index}">{{item}}</li>
        </ul>
+     </div>
+     <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+       <h1 class="fixed-title">{{fixedTitle}}</h1>
      </div>
    </Scroll>
 </template>
@@ -23,6 +26,7 @@
 import Scroll from 'base/scroll/scroll'
 import {getData} from 'common/js/dom'
 const Height = 18
+const TITLE_HEIGHT = 30
 export default {
   created () {
     this.probeType = 3
@@ -36,7 +40,8 @@ export default {
   data () {
     return {
       scrollY: -1,
-      currentIndex: 0
+      currentIndex: 0,
+      diff: -1
     }
   },
   props: {
@@ -50,6 +55,12 @@ export default {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    },
+    fixedTitle () {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   components: {
@@ -71,6 +82,15 @@ export default {
       this._scrollTo(anthorIndex)
     },
     _scrollTo (index) {
+      if (!index && index !== 0) {
+        return
+      }
+      if (index < 0) {
+        index = 0
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
+      this.scrollY = -this.listHeight[index]
       this.$refs.listView.scrollToElement(this.$refs.listGroup[index], 0)
     },
     scroll (pos) {
@@ -85,26 +105,44 @@ export default {
         height += ele.clientHeight
         this.listHeight.push(height)
       })
+    },
+    selectItem (item) {
+      this.$emit('select', item)
     }
   },
-  wactch: {
+  watch: {
     data () {
       setTimeout(() => {
         this.getHeight()
       }, 20)
     },
     scrollY (newY) {
-      console.log(this.currentIndex)
-      const listenHeight = this.listenHeight
+      const listenHeight = this.listHeight
+      // 滚动到顶部 nemY > 0
+      if (newY > 0) {
+        this.currentIndex = 0
+        return
+      }
+      // 中间部分滚动
       for (let i = 0; i < listenHeight.length; i++) {
         let h1 = listenHeight[i]
         let h2 = listenHeight[i + 1]
-        if (!h2 || (-newY > h1 && -newY < h2)) {
+        if (!h2 || (-newY >= h1 && -newY < h2)) {
           this.currentIndex = i
+          this.diff = h2 + newY
           return
         }
       }
-      this.currentIndex = 0
+      // 滚动到底部且 -newY大于最后元素的上限
+      this.currentIndex = listenHeight.length - 2
+    },
+    diff (newVal) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if (this.fixedTop === fixedTop) {
+        return
+      }
+      this.fixedTop = fixedTop
+      this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
     }
   }
 }
@@ -171,6 +209,7 @@ export default {
         padding-left: 20px
         font-size: $font-size-small
         color: $color-text-l
+        text-align: left
         background: $color-highlight-background
     .loading-container
       position: absolute

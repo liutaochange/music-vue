@@ -92,6 +92,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取歌手详情
+      apiRoutes.get('/api/singerDetail', (req, res) => {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referer: `https://y.qq.com/n/yqq/singer/${req.query.singermid}.html`
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
     }
   },
   plugins: [

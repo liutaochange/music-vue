@@ -50,10 +50,10 @@ export default {
       this.scroll && this.scroll.enable()
     },
     disable: function () {
-      this.scroll && this.disable()
+      this.scroll && this.scroll.disable()
     },
     refresh: function () {
-      this.scroll && this.refresh()
+      this.scroll && this.scroll.refresh()
     },
     scrollTo: function () {
       this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
@@ -64,8 +64,9 @@ export default {
   },
   watch: {
     data () {
+      const _this = this
       setTimeout(() => {
-        this.refresh()
+        _this.refresh()
       }, 20)
     }
   }
