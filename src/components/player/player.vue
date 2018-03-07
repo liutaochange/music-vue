@@ -1,8 +1,19 @@
 <template>
-
+  <div class="player" v-show="playList.length>0">
+    <div class="normal-player"></div>
+    <div class="mini-player" v-show="fullScreen"></div>
+  </div>
 </template>
 <script>
-
+import {mapGetters} from 'vuex'
+export default {
+  computed: {
+    ...mapGetters([
+      'fullScreen',
+      'playList'
+    ])
+  }
+}
 </script>
 <style lang="stylus" scoped rel="stylesheet/stylus">
   @import "~common/stylus/variable"
@@ -117,24 +128,130 @@
               font-size: $font-size-medium
               &.current
                 color: $color-text
-    .bottom
-      position: absolute
-      bottom: 50px
+      .bottom
+        position: absolute
+        bottom: 50px
+        width: 100%
+        .dot-wrapper
+          text-align: center
+          font-size: 0
+          .dot
+            display: inline-block
+            vertical-align: middle
+            margin: 0 4px
+            width: 8px
+            height: 8px
+            border-radius: 50%
+            background: $color-text-l
+            &.active
+              width: 20px
+              border-radius: 5px
+              background: $color-text-ll
+        .progress-wrapper
+          display: flex
+          align-items: center
+          width: 80%
+          margin: 0px auto
+          padding: 10px 0
+          .time
+            color: $color-text
+            font-size: $font-size-small
+            flex: 0 0 30px
+            line-height: 30px
+            width: 30px
+            &.time-l
+              text-align: left
+            &.time-r
+              text-align: right
+          .progress-bar-wrapper
+            flex: 1
+        .operators
+          display: flex
+          align-items: center
+          .icon
+            flex: 1
+            color: $color-theme
+            &.disable
+              color: $color-theme-d
+            i
+              font-size: 30px
+          .i-left
+            text-align: right
+          .i-center
+            padding: 0 20px
+            text-align: center
+            i
+              font-size: 40px
+          .i-right
+            text-align: left
+          .icon-favorite
+            color: $color-sub-theme
+        &.normal-enter-active, &.normal-leave-active
+          transition: all 0.4s
+          .top, .bottom
+            transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32)
+        &.normal-enter, &.normal-leave-to
+          opacity: 0
+          .top
+            transform: translate3d(0, -100px, 0)
+          .bottom
+            transform: translate3d(0, 100px, 0)
+    .mini-player
+      display: flex
+      align-items: center
+      position: fixed
+      left: 0
+      bottom: 0
+      z-index: 180
       width: 100%
-      .dot-wrapper
-        text-align: center
-        font-size: 0
-        .dot
-          display: inline-block
-          vertical-align: middle
-          margin: 0 4px
-          width: 8px
-          height: 8px
+      height: 60px
+      background: $color-highlight-background
+      &.mini-enter-active, &.mini-leave-active
+        transition: all 0.4s
+      &.mini-enter, &.mini-leave-to
+        opacity: 0
+      .icon
+        flex: 0 0 40px
+        width: 40px
+        padding: 0 10px 0 20px
+        img
           border-radius: 50%
-          background: $color-text-l
-          &.active
-            width: 20px
-            border-radius: 5px
-            background: $color-text-ll
+          &.play
+            animation: rotate 10s linear infinite
+          &.pause
+            animation-play-state: paused
+      .text
+        display: flex
+        flex-direction: column
+        justify-content: center
+        flex: 1
+        line-height: 20px
+        overflow: hidden
+        .name
+          margin-bottom: 2px
+          no-wrap()
+          font-size: $font-size-medium
+          color: $color-text
+        .desc
+          no-wrap()
+          font-size: $font-size-small
+          color: $color-text-d
+      .control
+        flex: 0 0 30px
+        width: 30px
+        padding: 0 10px
+        .icon-play-mini, .icon-pause-mini, .icon-playlist
+          font-size: 30px
+          color: $color-theme-d
+        .icon-mini
+          font-size: 32px
+          position: absolute
+          left: 0
+          top: 0
 
+  @keyframes rotate
+    0%
+      transform: rotate(0)
+    100%
+      transform: rotate(360deg)
 </style>
