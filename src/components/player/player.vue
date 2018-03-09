@@ -1,7 +1,57 @@
 <template>
   <div class="player" v-show="playList.length>0">
-    <div class="normal-player"></div>
-    <div class="mini-player" v-show="fullScreen"></div>
+    <div class="normal-player" v-show="fullScreen">
+      <div class="background">
+        <img width="100%" height="100%" >
+      </div>
+      <div class="top">
+        <div class="back" >
+          <i class="icon-back"></i>
+        </div>
+        <h1 class="title" v-html="currentSong.name"></h1>
+        <h2 class="subtitle" v-html="currentSong.singer"></h2>
+      </div>
+      <div class="middle">
+        <div class="middle-l" ref="middleL">
+          <div class="cd-wrapper" ref="cdWrapper">
+            <div class="cd" :class="cdCls">
+              <img class="image" >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="dot-wrapper">
+          <span class="dot" :class="{'active':currentShow==='cd'}"></span>
+          <span class="dot" :class="{'active':currentShow==='lyric'}"></span>
+        </div>
+        <div class="progress-wrapper">
+          <span class="time time-l">{{format(currentTime)}}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
+          </div>
+          <span class="time time-r">{{format(currentSong.duration)}}</span>
+        </div>
+        <div class="operators">
+          <div class="icon i-left">
+            <i :class="iconMode"></i>
+          </div>
+          <div class="icon i-left" :class="disableCls">
+            <i @click="prev" class="icon-prev"></i>
+          </div>
+          <div class="icon i-center" :class="disableCls">
+            <i @click="togglePlaying" :class="playIcon"></i>
+          </div>
+          <div class="icon i-right" :class="disableCls">
+            <i @click="next" class="icon-next"></i>
+          </div>
+          <div class="icon i-right">
+            <i @click="toggleFavorite(currentSong)" class="icon" :class="getFavoriteIcon(currentSong)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mini-player" v-show="!fullScreen"></div>
   </div>
 </template>
 <script>
