@@ -106,6 +106,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取歌词
+      apiRoutes.get('/api/musicLyric', (req, res) => {
+        const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/portal/player.html'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
     }
   },
   plugins: [

@@ -2,7 +2,7 @@ export const setSinger = 'setSinger'
 
 export const setPlaying = 'setPlaying'
 
-export const setFullSereen = 'setFullSereen'
+export const setFullScreen = 'setFullScreen'
 
 export const setPlayList = 'setPlayList'
 
