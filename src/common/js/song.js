@@ -1,6 +1,9 @@
 /**
  * Created by LiuTao on 2018/3/4.
  */
+import {getMusicLyric} from 'api/index'
+import {Base64} from 'js-base64'
+import {ErrOk} from 'api/config'
 export default class Song {
   constructor ({id, mid, singer, name, album, duration, image, url}) {
     this.id = id
@@ -11,6 +14,21 @@ export default class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+  getLyric () {
+    if (this.lyric) {
+      return Promise.resolve(this.lyric)
+    }
+    return new Promise((resolve, reject) => {
+      getMusicLyric(this.mid).then((res) => {
+        if (res.code === ErrOk) {
+          this.lyric = Base64.decode(res.lyric)
+          resolve(this.lyric)
+        } else {
+          reject(new Error('no lyric'))
+        }
+      })
+    })
   }
 }
 function filterSinger (singer) {

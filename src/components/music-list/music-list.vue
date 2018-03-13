@@ -27,12 +27,14 @@
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import SongList from 'base/song-list/song-list'
+import {playListMixin} from 'common/js/mixin'
 import {prefixStyle} from 'common/js/dom'
 import {mapActions} from 'vuex'
 const titleHeight = 40
 const transform = prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 export default {
+  mixins: [playListMixin],
   props: {
     bgImg: {
       type: String,
