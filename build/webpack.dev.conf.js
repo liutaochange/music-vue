@@ -128,6 +128,43 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取歌单详情
+      apiRoutes.get('/api/musicDisc', (req, res) => {
+        const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referer: `https://y.qq.com/n/yqq/playsquare/${req.query.disstid}.html`
+          },
+          params: req.query
+        }).then(response => {
+          let ret = response.data;
+          if (typeof (ret) === 'string') {
+            var reg = /^\w+\(({[^()]+})\)$/
+            var mathes = ret.match(reg)
+            if (mathes) {
+              ret = JSON.parse(mathes[1])
+            }
+          }
+          res.json(ret)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
+      // 获取排行榜
+      apiRoutes.get('/api/musicRank', (req, res) => {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
+        axios.get(url, {
+          headers: {
+            referrer: 'https://m.y.qq.com/',
+            host: 'm.y.qq.com'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
     }
   },
   plugins: [

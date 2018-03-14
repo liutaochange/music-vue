@@ -102,3 +102,41 @@ export const getMusicLyric = (mid) => {
     return Promise.resolve(res.data)
   })
 }
+
+// 获取歌单详情
+export const getMusicDisc = (dissid) => {
+  const url = '/api/musicDisc'
+  const data = Object.assign({}, commonParams, {
+    type: 1,
+    json: 1,
+    onlysong: 0,
+    disstid: dissid,
+    loginUin: 0,
+    platform: 'yqq',
+    hostUin: 0,
+    format: 'json',
+    needNewCode: 0
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}
+
+// 获取排行榜列表
+export const getMusicRank = () => {
+  const url = '/api/musicRank'
+  const data = Object.assign({}, commonParams, {
+    platform: 'h5',
+    uin: 0,
+    format: 'json',
+    needNewCode: 1,
+    _: Number(new Date())
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}

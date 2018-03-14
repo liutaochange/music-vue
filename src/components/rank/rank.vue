@@ -1,11 +1,63 @@
 <template>
   <div class="rank" ref="rank">
-    排行
+    <scroll class="toplist" ref="toplist" :data="topList" v-show="topList.length>0">
+      <ul>
+        <li class="item" v-for="(item,index) in topList" :key="index">
+          <div class="icon">
+            <img width="100" height="100" v-lazy="item.picUrl"/>
+          </div>
+          <ul class="songlist">
+            <li class="song"  v-for="(song,_index) in item.songList" :key="_index">
+              <span>{{index + 1}}</span>
+              <span>{{song.songname}}-{{song.singername}}</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </scroll>
+    <div class="loading-container" v-show="topList.length==0">
+      <loading></loading>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
-<script type="text/ecmascript-6">
-
+<script>
+import {playListMixin} from 'common/js/mixin'
+import loading from 'base/loading/loading'
+import scroll from 'base/scroll/scroll'
+import {getMusicRank} from 'api/index'
+import {ErrOk} from 'api/config'
+export default {
+  mixins: [playListMixin],
+  data () {
+    return {
+      topList: []
+    }
+  },
+  created () {
+    this.getRank()
+  },
+  methods: {
+    handlePlaylist (playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.rank.style.bottom = bottom
+      this.$refs.toplist.refresh()
+    },
+    getRank () {
+      const _this = this
+      getMusicRank().then((res) => {
+        if (res.code === ErrOk) {
+          _this.topList = res.data.topList
+        }
+      })
+    }
+  },
+  components: {
+    scroll,
+    loading
+  }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -46,6 +98,7 @@
           .song
             no-wrap()
             line-height: 26px
+            text-align: left
       .loading-container
         position: absolute
         width: 100%

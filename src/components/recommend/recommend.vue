@@ -1,6 +1,6 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll ref="scrolls" class="recommend-content" :data="playList" v-if="slider.length>0&&playList.length>0">
+    <scroll ref="scrolls" class="recommend-content" :data="playSongList" v-if="slider.length>0&&playSongList.length>0">
       <div>
         <div v-if="slider.length>0" class="slider-wrapper">
           <slider>
@@ -11,10 +11,10 @@
             </div>
           </slider>
         </div>
-        <div class="recommend-list" v-if="playList.length>0">
+        <div class="recommend-list" v-if="playSongList.length>0">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="(item,index) in playList" :key="index">
+            <li @click="selectItem(item)" class="item" v-for="(item,index) in playSongList" :key="index">
               <div class="icon">
                 <img @load="imageLoaded" v-lazy="item.imgurl" alt="图片" width="60" height="60">
               </div>
@@ -27,23 +27,27 @@
         </div>
       </div>
     </scroll>
-    <div class="loading-container" v-if="playList.length==0">
+    <div class="loading-container" v-if="playSongList.length==0">
       <loading></loading>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
-<script type="text/ecmascript-6">
-import {getDefaultBanner, getPlayList} from 'api/index'
-import {ErrOk} from 'api/config'
+<script>
 import slider from 'base/slider/slider'
 import scroll from 'base/scroll/scroll'
 import loading from 'base/loading/loading'
+import {getDefaultBanner, getPlayList} from 'api/index'
+import {ErrOk} from 'api/config'
+import {mapMutations} from 'vuex'
+import {playListMixin} from 'common/js/mixin'
 export default{
+  mixins: [playListMixin],
   data () {
     return {
       slider: [],
-      playList: []
+      playSongList: []
     }
   },
   created () {
@@ -57,6 +61,17 @@ export default{
     loading
   },
   methods: {
+    handlePlaylist (playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scrolls.refresh()
+    },
+    selectItem (item) {
+      this.$router.push({
+        path: `/recommend/${item.dissid}`
+      })
+      this.setDisc(item)
+    },
     getBannerList () {
       const _this = this
       getDefaultBanner().then(res => {
@@ -69,7 +84,7 @@ export default{
       const _this = this
       getPlayList().then((res) => {
         if (res.code === ErrOk) {
-          _this.playList = res.data.list
+          _this.playSongList = res.data.list
         }
       })
     },
@@ -79,7 +94,10 @@ export default{
         _this.checkLoaded = true
         _this.$refs.scrolls.refresh()
       }
-    }
+    },
+    ...mapMutations({
+      'setDisc': 'setDisc'
+    })
   }
 }
 </script>

@@ -13,3 +13,5 @@ export const setMode = 'setMode'
 export const setCurrentIndex = 'setCurrentIndex'
 
 export const setCurrentSong = 'setCurrentSong'
+
+export const setDisc = 'setDisc'
