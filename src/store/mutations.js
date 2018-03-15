@@ -23,6 +23,9 @@ const mutations = {
   },
   [types.setDisc] (state, disc) {
     state.disc = disc
+  },
+  [types.setTopList] (state, topList) {
+    state.topList = topList
   }
 }
 export default mutations

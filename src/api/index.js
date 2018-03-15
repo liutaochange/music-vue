@@ -140,3 +140,71 @@ export const getMusicRank = () => {
     return Promise.resolve(res.data)
   })
 }
+
+// 获取排行榜详情
+export const getMusicRankDetails = (topid) => {
+  const url = '/api/musicRankDetails'
+  const data = Object.assign({}, commonParams, {
+    platform: 'h5',
+    uin: 0,
+    tpl: 3,
+    format: 'json',
+    page: 'detail',
+    needNewCode: 1,
+    type: 'top',
+    topid: topid,
+    _: Number(new Date())
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}
+
+// 歌手，歌名搜索
+export const searchList = (query, page, zhida, perpage) => {
+  const url = '/api/searchList'
+  const data = Object.assign({}, commonParams, {
+    zhidaqu: 1,
+    catZhida: zhida ? 1 : 0,
+    t: 0,
+    flag: 1,
+    ie: 'utf-8',
+    sem: 1,
+    aggr: 0,
+    perpage: perpage,
+    n: perpage,
+    p: page,
+    remoteplace: 'txt.mqq.all',
+    w: query,
+    platform: 'h5',
+    uin: 0,
+    format: 'json',
+    page: 'detail',
+    needNewCode: 1,
+    _: Number(new Date())
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}
+
+// 歌手，歌名搜索推荐
+export const searchHotKey = () => {
+  const url = '/api/searchHotKey'
+  const data = Object.assign({}, commonParams, {
+    platform: 'h5',
+    uin: 0,
+    format: 'json',
+    needNewCode: 1,
+    _: Number(new Date())
+  })
+  return request.get(url, {
+    params: data
+  }).then(res => {
+    return Promise.resolve(res.data)
+  })
+}

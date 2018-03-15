@@ -165,6 +165,51 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取排行榜详情
+      apiRoutes.get('/api/musicRankDetails', (req, res) => {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referrer: `https://y.qq.com/w/toplist.html?ADTAG=myqq&from=myqq&channel=10007100&id=${req.query.topid}&type=top`,
+            host: 'm.y.qq.com'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
+      // 歌手，歌名搜索
+      apiRoutes.get('/api/searchList', (req, res) => {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        axios.get(url, {
+          headers: {
+            referrer: 'https://m.y.qq.com/',
+            host: 'm.y.qq.com'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
+      // 歌手，歌名搜索推荐
+      apiRoutes.get('/api/searchHotKey', (req, res) => {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
+        axios.get(url, {
+          headers: {
+            referrer: 'https://m.y.qq.com/',
+            host: 'm.y.qq.com'
+          },
+          params: req.query
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
     }
   },
   plugins: [

@@ -31,7 +31,7 @@ export default class Song {
     })
   }
 }
-function filterSinger (singer) {
+export function filterSinger (singer) {
   let ret = []
   if (!singer) {
     return
