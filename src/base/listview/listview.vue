@@ -11,7 +11,7 @@
          </ul>
        </li>
      </ul>
-     <div class="list-shortcut" @touchstart.stop.prevent="onTouchStart" @touchmove.stop.prevent="stopMove">
+     <div class="list-shortcut" @touchstart.stop.prevent="onTouchStart" @touchmove.stop.prevent="stopMove" @touchend.stop>
        <ul>
          <li v-for="(item,index) in shortList" :key="index" class="item" :data-index="index" :class="{'current': currentIndex == index}">{{item}}</li>
        </ul>
@@ -19,11 +19,15 @@
      <div class="list-fixed" v-show="fixedTitle" ref="fixed">
        <h1 class="fixed-title">{{fixedTitle}}</h1>
      </div>
+     <div v-if="data.length === 0" class="loading-container">
+       <loading></loading>
+     </div>
    </Scroll>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
+import loading from 'base/loading/loading'
 import {getData} from 'common/js/dom'
 const Height = 18
 const TITLE_HEIGHT = 30
@@ -33,9 +37,6 @@ export default {
     this.touch = {}
     this.listenScroll = true
     this.listHeight = []
-    setTimeout(() => {
-      this.getHeight()
-    }, 20)
   },
   data () {
     return {
@@ -47,7 +48,7 @@ export default {
   props: {
     data: {
       type: Array,
-      default: null
+      default: () => []
     }
   },
   computed: {
@@ -64,7 +65,8 @@ export default {
     }
   },
   components: {
-    Scroll
+    Scroll,
+    loading
   },
   methods: {
     onTouchStart (e) {
@@ -115,9 +117,10 @@ export default {
   },
   watch: {
     data () {
-      setTimeout(() => {
-        this.getHeight()
-      }, 20)
+      const _this = this
+      this.$nextTick().then(function () {
+        _this.getHeight()
+      })
     },
     scrollY (newY) {
       const listenHeight = this.listHeight

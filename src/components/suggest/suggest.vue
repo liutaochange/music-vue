@@ -46,7 +46,7 @@ export default {
       page: 1,
       pullup: true,
       beforeScroll: true,
-      hasMore: true,
+      hasMore: false,
       result: []
     }
   },
@@ -81,6 +81,7 @@ export default {
       this.$emit('listScroll')
     },
     selectItem (item) {
+      console.log(item)
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,

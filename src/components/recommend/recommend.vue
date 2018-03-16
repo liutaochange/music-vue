@@ -1,6 +1,6 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll ref="scrolls" class="recommend-content" :data="playSongList" v-if="slider.length>0&&playSongList.length>0">
+    <scroll ref="scrolls" class="recommend-content" :data="playSongList">
       <div>
         <div v-if="slider.length>0" class="slider-wrapper">
           <slider>
@@ -11,7 +11,7 @@
             </div>
           </slider>
         </div>
-        <div class="recommend-list" v-if="playSongList.length>0">
+        <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
             <li @click="selectItem(item)" class="item" v-for="(item,index) in playSongList" :key="index">
@@ -26,10 +26,10 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="playSongList.length==0">
+        <loading></loading>
+      </div>
     </scroll>
-    <div class="loading-container" v-if="playSongList.length==0">
-      <loading></loading>
-    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -53,7 +53,9 @@ export default{
   created () {
     const _this = this
     _this.getBannerList()
-    _this.getPlayList()
+    setTimeout(() => {
+      _this.getPlayList()
+    }, 500)
   },
   components: {
     slider,

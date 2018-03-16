@@ -1,6 +1,6 @@
 <template>
   <div class="rank" ref="rank">
-    <scroll class="toplist" ref="toplist" :data="topList" v-show="topList.length>0">
+    <scroll class="toplist" ref="toplist" :data="topList">
       <ul>
         <li @click="selectItem(item)" class="item" v-for="(item,index) in topList" :key="index">
           <div class="icon">
@@ -14,10 +14,10 @@
           </ul>
         </li>
       </ul>
+      <div class="loading-container" v-show="topList.length==0">
+        <loading></loading>
+      </div>
     </scroll>
-    <div class="loading-container" v-show="topList.length==0">
-      <loading></loading>
-    </div>
     <router-view></router-view>
   </div>
 </template>

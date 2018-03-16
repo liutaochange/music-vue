@@ -1,10 +1,7 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view :data="singerList" v-if="singerList.length>0" @select="selectItem" ref="list"></list-view>
+    <list-view :data="singerList" @select="selectItem" ref="list"></list-view>
     <router-view></router-view>
-    <div v-if="singerList && singerList.length == 0" class="loading-container">
-      <Loading></Loading>
-    </div>
   </div>
 </template>
 
@@ -13,7 +10,6 @@ import {getSingerList} from 'api/index'
 import {ErrOk} from 'api/config'
 import Singer from 'common/js/singer'
 import ListView from 'base/listview/listview'
-import Loading from 'base/loading/loading'
 import {mapMutations} from 'vuex'
 import {playListMixin} from 'common/js/mixin'
 const hotName = '热门'
@@ -95,8 +91,7 @@ export default {
     })
   },
   components: {
-    ListView,
-    Loading
+    ListView
   }
 }
 </script>

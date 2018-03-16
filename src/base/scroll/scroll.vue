@@ -17,7 +17,7 @@ export default {
     },
     data: {
       type: Array,
-      default: null
+      default: () => []
     },
     listenScroll: {
       type: Boolean,
@@ -34,9 +34,9 @@ export default {
   },
   mounted () {
     const _this = this
-    setTimeout(() => {
+    this.$nextTick().then(function () {
       _this.initScroll()
-    }, 20)
+    })
   },
   methods: {
     initScroll: function () {
@@ -85,9 +85,9 @@ export default {
   watch: {
     data () {
       const _this = this
-      setTimeout(() => {
+      this.$nextTick().then(function () {
         _this.refresh()
-      }, 20)
+      })
     }
   }
 }

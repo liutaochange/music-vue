@@ -17,3 +17,5 @@ export const setCurrentSong = 'setCurrentSong'
 export const setDisc = 'setDisc'
 
 export const setTopList = 'setTopList'
+
+export const setSearchHistory = 'setSearchHistory'
