@@ -46,7 +46,7 @@ export default {
       page: 1,
       pullup: true,
       beforeScroll: true,
-      hasMore: false,
+      hasMore: true,
       result: []
     }
   },
@@ -58,7 +58,7 @@ export default {
       this.page = 1
       this.hasMore = true
       this.$refs.suggest.scrollTo(0, 0)
-      searchList(this.query, this.page, this.showSinger).then((res) => {
+      searchList(this.query, this.page, this.showSinger, perpage).then((res) => {
         if (res.code === ErrOk) {
           this.result = this._genResult(res.data)
           this._checkMore(res.data)
@@ -81,7 +81,6 @@ export default {
       this.$emit('listScroll')
     },
     selectItem (item) {
-      console.log(item)
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,

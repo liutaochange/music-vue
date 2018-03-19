@@ -4,7 +4,7 @@
       <search-box ref="searchBox" @query="queryChange"></search-box>
     </div>
     <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
-      <div ref="shortcut" class="shortcut">
+      <Scroll ref="shortcut" class="shortcut" :data="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -24,7 +24,7 @@
             <search-list @delete="deleteOne" @select="addQuery" :searches="searchHistory"></search-list>
           </div>
         </div>
-      </div>
+      </Scroll>
     </div>
     <div class="search-result" v-show="query" ref="searchResult">
       <suggest @listScroll="blurInput" @select="saveSearch" ref="suggest" :query="query"></suggest>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
 import searchBox from 'base/search-box/search-box'
 import SearchList from 'base/search-list/search-list'
 import Confirm from 'base/confirm/confirm'
@@ -42,7 +43,9 @@ import suggest from 'components/suggest/suggest'
 import {searchHotKey} from 'api/index'
 import {ErrOk} from 'api/config'
 import {mapActions, mapGetters} from 'vuex'
+import {playListMixin} from 'common/js/mixin'
 export default {
+  mixins: [playListMixin],
   created () {
     this.GetSearchHotKey()
   },
@@ -65,9 +68,17 @@ export default {
     searchBox,
     suggest,
     SearchList,
-    Confirm
+    Confirm,
+    Scroll
   },
   methods: {
+    handlePlaylist (playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.shortcutWrapper.style.bottom = bottom
+      this.$refs.searchResult.style.bottom = bottom
+      this.$refs.shortcut.refresh()
+      this.$refs.suggest.refresh()
+    },
     GetSearchHotKey () {
       const _this = this
       searchHotKey().then((res) => {
@@ -105,8 +116,11 @@ export default {
   },
   watch: {
     query (newQuery) {
+      const _this = this
       if (!newQuery) {
-        console.log(newQuery)
+        _this.$nextTick().then(function () {
+          _this.$refs.shortcut.refresh()
+        })
       }
     }
   }

@@ -37,25 +37,29 @@ export const insertSong = function ({commit, state}, song) {
   // 记录当前歌曲
   let currentSong = playList[currentIndex]
   // 查找当前列表中是否有插入的歌曲，并返回索引
-  let fdIndex = findIndex(playList, song)
+  let fpIndex = findIndex(playList, song)
   // 因为插入歌曲，所以索引加一
   currentIndex += 1
-  playList.splice(currentIndex, 0, song)
   // 插入这首歌到当前位置
-  if (fdIndex > -1) {
-    playList.splice(fdIndex, 1)
-    currentIndex -= 1
-  } else {
-    playList.splice(fdIndex + 1, 1)
+  playList.splice(currentIndex, 0, song)
+  // 如果已经包含了这首歌
+  if (fpIndex > -1) {
+    // 如果当前插入的序号大于列表中的序号
+    if (currentIndex > fpIndex) {
+      playList.splice(fpIndex, 1)
+      currentIndex -= 1
+    } else {
+      playList.splice(fpIndex + 1, 1)
+    }
   }
   let currentSIndex = findIndex(sequenceList, currentSong) + 1
   let fSdIndex = findIndex(sequenceList, song)
   sequenceList.splice(currentSIndex, 0, song)
   if (fSdIndex > -1) {
     if (currentSIndex > fSdIndex) {
-      sequenceList.splice(fdIndex, 1)
+      sequenceList.splice(fSdIndex, 1)
     } else {
-      sequenceList.splice(fdIndex + 1, 1)
+      sequenceList.splice(fSdIndex + 1, 1)
     }
   }
   commit(types.setPlayList, playList)
@@ -75,4 +79,32 @@ export const deleteSearchHistory = function ({commit}, query) {
 
 export const clearSearchHistory = function ({commit}, query) {
   commit(types.setSearchHistory, clearSearch(query))
+}
+
+export const deleteSong = function ({commit, state}, song) {
+  let playList = state.playList.slice()
+  let sequenceList = state.sequenceList.slice()
+  let currentIndex = state.currentIndex
+  let pIndex = findIndex(playList, song)
+  playList.splice(pIndex, 1)
+  let sIndex = findIndex(sequenceList, song)
+  sequenceList.splice(sIndex, 1)
+  if (currentIndex > pIndex || currentIndex === playList.length) {
+    currentIndex -= 1
+  }
+  commit(types.setPlayList, playList)
+  commit(types.setSequenceList, sequenceList)
+  commit(types.setCurrentIndex, currentIndex)
+  if (!playList.length) {
+    commit(types.setPlaying, false)
+  } else {
+    commit(types.setPlaying, true)
+  }
+}
+
+export const deleteSongList = function ({commit}) {
+  commit(types.setCurrentIndex, -1)
+  commit(types.setPlayList, [])
+  commit(types.setSequenceList, [])
+  commit(types.setPlaying, false)
 }
