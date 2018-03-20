@@ -9,9 +9,9 @@
             <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <scroll ref="listContent" :data="sequenceList" class="list-content">
+        <scroll ref="listContent" :data="sequenceList" class="list-content" :refreshDelay="refreshDelay">
           <transition-group ref="list" name="list" tag="ul">
-            <li :key="item.id" class="item" v-for="(item,index) in sequenceList" @click="selectItem(item,index)">
+            <li @click="selectItem(item,index)" class="item" v-for="(item,index) in sequenceList" :key="item.id">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span @click.stop="toggleFavorite(item)" class="like">
@@ -34,7 +34,7 @@
         </div>
       </div>
       <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
-      <!--<add-song ref="addSong"></add-song>-->
+      <add-song ref="addSong"></add-song>
     </div>
   </transition>
 </template>
@@ -44,7 +44,7 @@ import {mapActions} from 'vuex'
 import {playMode} from 'common/js/config'
 import Scroll from 'base/scroll/scroll'
 import Confirm from 'base/confirm/confirm'
-// import AddSong from 'components/add-song/add-song'
+import AddSong from 'components/add-song/add-song'
 import {playerMixin} from 'common/js/mixin'
 
 export default {
@@ -86,7 +86,6 @@ export default {
     },
     selectItem (item, index) {
       if (this.mode === playMode.random) {
-        console.log(this.playList)
         index = this.playList.findIndex((song) => {
           return song.id === item.id
         })
@@ -95,7 +94,6 @@ export default {
       this.setPlaying(true)
     },
     scrollToCurrent (current) {
-      console.log(this.sequenceList)
       const index = this.sequenceList.findIndex((song) => {
         return current.id === song.id
       })
@@ -128,7 +126,8 @@ export default {
   },
   components: {
     Scroll,
-    Confirm
+    Confirm,
+    AddSong
   }
 }
 </script>

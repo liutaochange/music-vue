@@ -19,3 +19,7 @@ export const setDisc = 'setDisc'
 export const setTopList = 'setTopList'
 
 export const setSearchHistory = 'setSearchHistory'
+
+export const setPlayHistory = 'setPlayHistory'
+
+export const setFavoriteList = 'setFavoriteList'

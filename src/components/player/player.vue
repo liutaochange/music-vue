@@ -60,7 +60,7 @@
               <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon icon-not-favorite" ></i>
+              <i class="icon" :class="getFavoriteIcon(currentSong)" @click="toggleFavorite(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -85,12 +85,13 @@
         </div>
       </div>
     </transition>
-    <playlist ref="playlist"></playlist>
+    <playlist ref="playList"></playlist>
     <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
+import playlist from 'components/playlist/playlist'
 import Lyric from 'lyric-parser'
 import scroll from 'base/scroll/scroll'
 import animations from 'create-keyframe-animation'
@@ -98,7 +99,6 @@ import {prefixStyle} from 'common/js/dom'
 import progressBar from 'base/progress-bar/progress-bar'
 import progressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
-import playlist from 'components/playlist/playlist'
 import {playerMixin} from 'common/js/mixin'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
@@ -249,6 +249,7 @@ export default {
     },
     ready () {
       this.songReady = true
+      this.savePlayHistory(this.currentSong)
     },
     error () {
       this.songReady = true
@@ -298,7 +299,7 @@ export default {
       this.playingLyric = txt
     },
     showPlaylist () {
-      this.$refs.playlist.show()
+      this.$refs.playList.show()
     },
     middleTouchStart (e) {
       this.touch.inited = true
@@ -386,7 +387,10 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'setFullScreen'
-    })
+    }),
+    ...mapActions([
+      'savePlayHistory'
+    ])
   },
   watch: {
     playing (newPlaying) {

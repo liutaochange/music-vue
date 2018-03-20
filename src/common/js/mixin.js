@@ -1,7 +1,7 @@
 /**
  * Created by LiuTao on 2018/3/13.
  */
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/utils'
 export const playListMixin = {
@@ -37,7 +37,8 @@ export const playerMixin = {
       'playList',
       'currentSong',
       'mode',
-      'sequenceList'
+      'sequenceList',
+      'favoriteList'
     ])
   },
   methods: {
@@ -84,6 +85,42 @@ export const playerMixin = {
       setMode: 'setMode',
       setPlayList: 'setPlayList',
       setSequenceList: 'setSequenceList'
-    })
+    }),
+    ...mapActions([
+      'deleteFavoriteList',
+      'saveFavoriteList'
+    ])
+  }
+}
+
+export const searchMixin = {
+  data () {
+    return {
+      query: '',
+      refreshDelay: 120
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'searchHistory'
+    ])
+  },
+  methods: {
+    onQueryChange (query) {
+      this.query = query
+    },
+    blurInput () {
+      this.$refs.searchBox.blur()
+    },
+    addQuery (query) {
+      this.$refs.searchBox.setQuery(query)
+    },
+    saveSearch () {
+      this.saveSearchHistory(this.query)
+    },
+    ...mapActions([
+      'saveSearchHistory',
+      'deleteSearchHistory'
+    ])
   }
 }

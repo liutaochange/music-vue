@@ -30,6 +30,10 @@ export default {
     beforeScroll: {
       type: Boolean,
       default: false
+    },
+    refreshDelay: {
+      type: Number,
+      default: 20
     }
   },
   mounted () {
@@ -84,10 +88,9 @@ export default {
   },
   watch: {
     data () {
-      const _this = this
-      this.$nextTick().then(function () {
-        _this.refresh()
-      })
+      setTimeout(() => {
+        this.refresh()
+      }, this.refreshDelay)
     }
   }
 }
