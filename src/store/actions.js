@@ -77,8 +77,8 @@ export const deleteSearchHistory = function ({commit}, query) {
   commit(types.setSearchHistory, deleteSearch(query))
 }
 
-export const clearSearchHistory = function ({commit}, query) {
-  commit(types.setSearchHistory, clearSearch(query))
+export const clearSearchHistory = function ({commit}) {
+  commit(types.setSearchHistory, clearSearch())
 }
 
 export const deleteSong = function ({commit, state}, song) {

@@ -3,7 +3,7 @@
  */
 const getRandom = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 export function shuffle (arr) {
-  const _arr = arr.slice()
+  let _arr = arr.slice()
   for (let i = 0; i < _arr.length; i++) {
     let j = getRandom(0, i)
     let t = _arr[i]
