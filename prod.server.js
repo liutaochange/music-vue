@@ -1,15 +1,13 @@
 const express = require('express')
+const config = require('./config/index')
 const axios = require('axios')
 const app = express()
 const apiRoutes = express.Router()
-const config = require('./config/index')
+const port = process.env.PORT || config.build.port
 app.use('/api', apiRoutes)
-
-var port = process.env.PORT || config.build.port
-
-
+app.use(express.static('./dist'))
 // 获取banner
-apiRoutes.get('/api/recomend', (req, res) => {
+apiRoutes.get('/recomend', (req, res) => {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
   axios.get(url, {
     headers: {
@@ -24,7 +22,7 @@ apiRoutes.get('/api/recomend', (req, res) => {
   })
 })
 // 获取歌单
-apiRoutes.get('/api/playList', (req, res) => {
+apiRoutes.get('/playList', (req, res) => {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
   axios.get(url, {
     headers: {
@@ -38,7 +36,7 @@ apiRoutes.get('/api/playList', (req, res) => {
   })
 })
 // 获取歌手
-apiRoutes.get('/api/singerList', (req, res) => {
+apiRoutes.get('/singerList', (req, res) => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
   axios.get(url, {
     headers: {
@@ -52,7 +50,7 @@ apiRoutes.get('/api/singerList', (req, res) => {
   })
 })
 // 获取歌手详情
-apiRoutes.get('/api/singerDetail', (req, res) => {
+apiRoutes.get('/singerDetail', (req, res) => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
   axios.get(url, {
     headers: {
@@ -66,7 +64,7 @@ apiRoutes.get('/api/singerDetail', (req, res) => {
   })
 })
 // 获取歌词
-apiRoutes.get('/api/musicLyric', (req, res) => {
+apiRoutes.get('/musicLyric', (req, res) => {
   const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
   axios.get(url, {
     headers: {
@@ -88,7 +86,7 @@ apiRoutes.get('/api/musicLyric', (req, res) => {
   })
 })
 // 获取歌单详情
-apiRoutes.get('/api/musicDisc', (req, res) => {
+apiRoutes.get('/musicDisc', (req, res) => {
   const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
   axios.get(url, {
     headers: {
@@ -110,7 +108,7 @@ apiRoutes.get('/api/musicDisc', (req, res) => {
   })
 })
 // 获取排行榜
-apiRoutes.get('/api/musicRank', (req, res) => {
+apiRoutes.get('/musicRank', (req, res) => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
   axios.get(url, {
     headers: {
@@ -125,7 +123,7 @@ apiRoutes.get('/api/musicRank', (req, res) => {
   })
 })
 // 获取排行榜详情
-apiRoutes.get('/api/musicRankDetails', (req, res) => {
+apiRoutes.get('/musicRankDetails', (req, res) => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
   axios.get(url, {
     headers: {
@@ -140,7 +138,7 @@ apiRoutes.get('/api/musicRankDetails', (req, res) => {
   })
 })
 // 歌手，歌名搜索
-apiRoutes.get('/api/searchList', (req, res) => {
+apiRoutes.get('/searchList', (req, res) => {
   const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
   axios.get(url, {
     headers: {
@@ -155,7 +153,7 @@ apiRoutes.get('/api/searchList', (req, res) => {
   })
 })
 // 歌手，歌名搜索推荐
-apiRoutes.get('/api/searchHotKey', (req, res) => {
+apiRoutes.get('/searchHotKey', (req, res) => {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
   axios.get(url, {
     headers: {
@@ -169,10 +167,6 @@ apiRoutes.get('/api/searchHotKey', (req, res) => {
     console.log(error)
   })
 })
-
-app.use('/api', apiRoutes)
-
-app.use(express.static('./dist'))
 
 module.exports = app.listen(port, function (err) {
   if (err) {
