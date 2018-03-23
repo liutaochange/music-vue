@@ -591,7 +591,7 @@ export default {
                 animation: rotate 20s linear infinite
           .playing-lyric-wrapper
             width: 80%
-            margin: 30px auto 0 auto
+            margin: 15px auto 0 auto
             overflow: hidden
             text-align: center
             .playing-lyric
@@ -623,7 +623,7 @@ export default {
               font-size: $font-size-medium
       .bottom
         position: absolute
-        bottom: 50px
+        bottom: 15px
         width: 100%
         .dot-wrapper
           text-align: center
