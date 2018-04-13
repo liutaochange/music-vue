@@ -6,7 +6,7 @@
           <slider>
             <div v-for="(item,index) in slider" :key="index">
               <a :href="item.linkUrl">
-                <img :src="item.picUrl" alt="banner" class="needsclick">
+                <img :src="item.picUrl" alt="banner" class="needsclick" @load="slideImgload">
               </a>
             </div>
           </slider>
@@ -47,7 +47,9 @@ export default{
   data () {
     return {
       slider: [],
-      playSongList: []
+      playSongList: [],
+      sliderImgLoad: false,
+      checkLoaded: false
     }
   },
   created () {
@@ -89,6 +91,13 @@ export default{
           _this.playSongList = res.data.list
         }
       })
+    },
+    slideImgload () {
+      const _this = this
+      if (!_this.sliderImgLoad) {
+        _this.sliderImgLoad = true
+        _this.$refs.scrolls.refresh()
+      }
     },
     imageLoaded () {
       const _this = this
