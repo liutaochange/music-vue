@@ -34,14 +34,14 @@ export default{
   },
   mounted () {
     const _this = this
-    setTimeout(function () {
+    _this.$nextTick().then(function () {
       _this.setWidth()
       _this.initDots()
       _this.initSlider()
       if (_this.autoPlay) {
         _this.play()
       }
-    }, 20)
+    })
     window.addEventListener('resize', () => {
       if (!this.slider) {
         return
