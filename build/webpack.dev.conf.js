@@ -189,6 +189,28 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(error)
         })
       })
+      // 获取歌曲url路径参数vkey
+      apiRoutes.get('/api/getSongUrl', (req, res) => {
+        const url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
+        axios.get(url, {
+          headers: {
+            referer: `https://y.qq.com/portal/player.html`
+          },
+          params: req.query
+        }).then(response => {
+          let ret = response.data;
+          if (typeof (ret) === 'string') {
+            var reg = /^\w+\(({[^()]+})\)$/
+            var mathes = ret.match(reg)
+            if (mathes) {
+              ret = JSON.parse(mathes[1])
+            }
+          }
+          res.json(ret)
+        }).catch(error => {
+          console.log(error)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {

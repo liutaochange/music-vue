@@ -23,7 +23,7 @@ import Loading from 'base/loading/loading'
 import NoResult from 'base/no-result/no-result'
 import {searchList} from 'api/index'
 import {ErrOk} from 'api/config'
-import {createSong} from 'common/js/song'
+import {createSong, getSongUrl} from 'common/js/song'
 import {mapMutations, mapActions} from 'vuex'
 import Singer from 'common/js/singer'
 
@@ -123,7 +123,9 @@ export default {
       let ret = []
       list.forEach((musicData) => {
         if (musicData.songid && musicData.albummid) {
-          ret.push(createSong(musicData))
+          let song = createSong(musicData)
+          getSongUrl(song, musicData.songmid)
+          ret.push(song)
         }
       })
       return ret
