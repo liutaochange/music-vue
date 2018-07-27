@@ -11,7 +11,7 @@ apiRoutes.get('/recomend', (req, res) => {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
   axios.get(url, {
     headers: {
-      referrer: 'https://m.y.qq.com/',
+      referer: 'https://m.y.qq.com/',
       host: 'm.y.qq.com'
     },
     params: req.query
@@ -112,7 +112,7 @@ apiRoutes.get('/musicRank', (req, res) => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
   axios.get(url, {
     headers: {
-      referrer: 'https://m.y.qq.com/',
+      referer: 'https://m.y.qq.com/',
       host: 'm.y.qq.com'
     },
     params: req.query
@@ -127,7 +127,7 @@ apiRoutes.get('/musicRankDetails', (req, res) => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
   axios.get(url, {
     headers: {
-      referrer: `https://y.qq.com/w/toplist.html?ADTAG=myqq&from=myqq&channel=10007100&id=${req.query.topid}&type=top`,
+      referer: `https://y.qq.com/w/toplist.html?ADTAG=myqq&from=myqq&channel=10007100&id=${req.query.topid}&type=top`,
       host: 'm.y.qq.com'
     },
     params: req.query
@@ -142,12 +142,20 @@ apiRoutes.get('/searchList', (req, res) => {
   const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
   axios.get(url, {
     headers: {
-      referrer: 'https://m.y.qq.com/',
+      referer: 'https://y.qq.com/portal/search.html',
       host: 'm.y.qq.com'
     },
     params: req.query
   }).then(response => {
-    res.json(response.data)
+    let ret = response.data;
+    if (typeof (ret) === 'string') {
+      var reg = /^\w+\(({[^()]+})\)$/
+      var mathes = ret.match(reg)
+      if (mathes) {
+        ret = JSON.parse(mathes[1])
+      }
+    }
+    res.json(ret)
   }).catch(error => {
     console.log(error)
   })
@@ -157,7 +165,7 @@ apiRoutes.get('/searchHotKey', (req, res) => {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
   axios.get(url, {
     headers: {
-      referrer: 'https://m.y.qq.com/',
+      referer: 'https://m.y.qq.com/',
       host: 'm.y.qq.com'
     },
     params: req.query
